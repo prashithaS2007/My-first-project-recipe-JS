@@ -32,3 +32,5 @@ const renderRecipes = (recipesToRender) => {
 
 // Initialize
 renderRecipes(recipes);
+
+console.log("Part 1 working");
