@@ -34,3 +34,57 @@ const renderRecipes = (recipesToRender) => {
 renderRecipes(recipes);
 
 console.log("Part 1 working");
+
+let currentFilter = 'all';
+let currentSort = 'none';
+
+const filterButtons = document.querySelectorAll('#filters button');
+const sortButtons = document.querySelectorAll('#sorts button');
+const filterByDifficulty = (recipes, difficulty) => {
+    if (difficulty === 'all') return recipes;
+    return recipes.filter(r => r.difficulty === difficulty);
+};
+
+const filterByTime = (recipes, maxTime) => {
+    return recipes.filter(r => r.time <= maxTime);
+};
+
+const applyFilter = (recipes, filterType) => {
+    switch(filterType) {
+        case 'easy': return filterByDifficulty(recipes, 'easy');
+        case 'medium': return filterByDifficulty(recipes, 'medium');
+        case 'hard': return filterByDifficulty(recipes, 'hard');
+        case 'quick': return filterByTime(recipes, 30);
+        default: return recipes;
+    }
+};
+const applySort = (recipes, sortType) => {
+    switch(sortType) {
+        case 'name': return [...recipes].sort((a,b)=>a.title.localeCompare(b.title));
+        case 'time': return [...recipes].sort((a,b)=>a.time-b.time);
+        default: return recipes;
+    }
+};
+
+const updateDisplay = () => {
+    let recipesToDisplay = applyFilter(recipes, currentFilter);
+    recipesToDisplay = applySort(recipesToDisplay, currentSort);
+    renderRecipes(recipesToDisplay);
+    updateActiveButtons();
+};
+const updateActiveButtons = () => {
+    filterButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === currentFilter));
+    sortButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sort === currentSort));
+};
+
+filterButtons.forEach(btn => btn.addEventListener('click', () => {
+    currentFilter = btn.dataset.filter;
+    updateDisplay();
+}));
+
+sortButtons.forEach(btn => btn.addEventListener('click', () => {
+    currentSort = btn.dataset.sort;
+    updateDisplay();
+}));
+
+updateDisplay();  // instead of renderRecipes(recipes)
